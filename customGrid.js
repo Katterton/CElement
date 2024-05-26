@@ -56,23 +56,40 @@ export class CustomGrid extends LitElement {
 
     const headerRow = document.createElement('div');
     headerRow.className = 'row header';
-
-    for (let key in data[0]) {
-      let headerCell = document.createElement('div');
-      headerCell.innerHTML = key;
-      headerRow.appendChild(headerCell);
+    const headRes = (element)=> {
+      for(let key in element){
+        let headerCell = document.createElement('div');
+        if(typeof element[key] === 'object' && element[key]  !== null){
+          headRes(element[key])
+        }
+        else{
+          headerCell.innerHTML = key;
+          headerRow.appendChild(headerCell);
+        }
+      }
     }
+    headRes(data[0]);
 
     this.shadowRoot.querySelector(':host .grid').appendChild(headerRow);
 
+   const cellRes= (r, element)=>{
+    for(let key in element){
+      let cell = document.createElement('div');
+      console.log(element[key]);
+      if(typeof element[key] === 'object' && element[key]  !== null){
+        cellRes(r, element[key])
+      }
+else{
+      cell.innerHTML = element[key];
+
+      r.appendChild(cell);
+}
+    }
+   }
     data.forEach(element => {
       let row = document.createElement('div');
       row.className = 'row';
-      for(let key in element){
-        let cell = document.createElement('div');
-        cell.innerHTML = element[key];
-        row.appendChild(cell);
-      }
+      cellRes(row, element);
       
       this.shadowRoot.querySelector(':host .grid').appendChild(row);
 
